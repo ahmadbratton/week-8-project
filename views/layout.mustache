@@ -6,9 +6,30 @@
     <link rel="stylesheet" href="/css/main.css">
   </head>
   <body>
+    <nav>
+      <a href="/api/home">home</a>
+      <a href="/api/create">create a snippet</a>
+      <form class="" action="/api/signout" method="post">
+        <button type="submit" name="button">signout</button>
+      </form>
+    </nav>
     <div class="container">
       <h1>App is up and running!</h1>
-      {{{yield}}}
+      {{#user}}
+      <p>you are signed in as: {{.}}  </p>
+
+      <form class="" action="/api/language" method="get">
+        <label for="language">find language specific snippets</label>
+        <input type="text" name="language" placeholder="language">
+        <button type="submit" name="button" onclick="window.location='/api/location';">submit</button>
+      </form>
+      <form class="" action="/api/usertags" method="get">
+        <label for="tag">find tag specific snippets</label>
+        <input type="text" name="tag" placeholder="tag">
+        <button type="submit" name="button" onclick="window.location='/api/usertags';">submit</button>
+      </form>
+      {{/user}}
     </div>
+    {{{yield}}}
   </body>
 </html>

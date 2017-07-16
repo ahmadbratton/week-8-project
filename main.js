@@ -4,7 +4,7 @@ const validator       = require("express-validator");
 const mustacheExpress = require("mustache-express");
 const path            = require("path");
 const session         = require("express-session");
-const routes          = require("./routes/index.js");
+const routes          = require("./routes/routes.js");
 
 // Initialze Express App
 const app = express();
@@ -37,6 +37,8 @@ app.use(session({
 app.use(routes);
 
 // Open Port
-app.listen(app.get('port'), function() {
-  console.log("whats up mane");
-});
+if (require.main === module) {
+  app.listen(app.get("port"), function () {
+      console.log("whats up mane")
+  });
+}

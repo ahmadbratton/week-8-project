@@ -1,10 +1,4 @@
-
-<h1>Users Snippets</h1>
-{{#snippets}}
-<div class="userSnippet">
-  <form class="" action="/api/view/snippet/{{id}}" method="get">
-    <button type="submit" name="button" onclick="window.location='/api/view/snippet/{{id}}';">veiw snippet</button>
-  </form>
+{{#snippet}}
   <p>{{body}}</p>
   <p>snippet notes: {{notes}}</p>
   <p>snippet language: {{language}}</p>
@@ -19,4 +13,4 @@
   <button type="submit" name="button">create tag</button>
 </form>
 </div>
-{{/snippets}}
+{{/snippet}}

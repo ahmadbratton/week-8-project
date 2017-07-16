@@ -1,0 +1,13 @@
+<h1>tag specific snippets</h1>
+{{#usertag}}
+<div class="userSnippet">
+  <p>{{body}}</p>
+  <p>snippet notes: {{notes}}</p>
+  <p>snippet language: {{language}}</p>
+<div class="star">
+  <form class="" action="api/star/{{id}}" method="post">
+    <button type="submit" name="button">star</button>
+  </form>
+</div>
+</div>
+{{/usertag}}

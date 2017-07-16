@@ -2,14 +2,14 @@
   "development": {
     "username": "ahmadbratton",
     "password": null,
-    "database": "",
+    "database": "codeSnippet",
     "host": "127.0.0.1",
     "dialect": "postgres"
   },
   "test": {
     "username": "ahmadbratton",
     "password": null,
-    "database": "",
+    "database": "codeSnippet",
     "host": "127.0.0.1",
     "dialect": "postgres"
   },
@@ -17,7 +17,7 @@
     "username": "ahmadbratton",
     "password": null,
     "use_env_variable": "DATABASE_URL",
-    "database": "DATABASE_URL",
+    "database": "codeSnippet",
     "host": "127.0.0.1",
     "dialect": "postgres"
   }

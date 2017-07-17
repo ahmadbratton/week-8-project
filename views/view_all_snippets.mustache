@@ -1,21 +1,19 @@
-
-<h1>Users Snippets</h1>
 {{#snippets}}
-<div class="userSnippet">
+<div class="allSnippet">
   <form class="" action="/api/view/snippet/{{id}}" method="get">
     <button type="submit" name="button" onclick="window.location='/api/view/snippet/{{id}}';">veiw snippet</button>
   </form>
-  {{#user}}
-  <form class="" action="/api/view/user/snippets/{{userId}}"  method="get">
-    <p>user snippet: <button type="submit" name="button" onclick="window.location='/api/view/user/snippets/{{userId}}';">{{user}}</button> </p>
+
+  <form class="" action="/api/view/user/snippets/{{userid}}"  method="get">
+    <p>user snippet: <button type="submit" name="button" onclick="window.location='/api/view/user/snippets/{{userid}}';">{{user}}</button> </p>
   </form>
-  {{/user}}
+
   <p>{{body}}</p>
   <p>snippet notes: {{notes}}</p>
   <p>snippet language: {{language}}</p>
 <div class="star">
   <form class="" action="/api/star/{{id}}" method="post">
-    <p><button type="submit" name="button">star</button> :{{stars}}</p>
+    <button type="submit" name="button">star</button>
   </form>
 </div>
 <form class="" action="/api/create/tag/{{id}}" method="post">

@@ -9,6 +9,7 @@
     <nav>
       <a href="/api/home">home</a>
       <a href="/api/create">create a snippet</a>
+      <a href="/api/view/all/snippets">view all snippets</a>
       <form class="" action="/api/signout" method="post">
         <button type="submit" name="button">signout</button>
       </form>
@@ -19,14 +20,24 @@
       <p>you are signed in as: {{.}}  </p>
 
       <form class="" action="/api/language" method="get">
-        <label for="language">find language specific snippets</label>
+        <label for="language">find your language specific snippets</label>
         <input type="text" name="language" placeholder="language">
         <button type="submit" name="button" onclick="window.location='/api/location';">submit</button>
       </form>
       <form class="" action="/api/usertags" method="get">
-        <label for="tag">find tag specific snippets</label>
+        <label for="tag">find your tag specific snippets</label>
         <input type="text" name="tag" placeholder="tag">
         <button type="submit" name="button" onclick="window.location='/api/usertags';">submit</button>
+      </form>
+      <form class="" action="/api/view/all/language" method="get">
+        <label for="allLanguage">find all language specific snippets</label>
+        <input type="text" name="allLanguage" placeholder="language">
+        <button type="submit" name="button" onclick="window.location='/api/view/all/language';">submit</button>
+      </form>
+      <form class="" action="/api/view/all/tags" method="get">
+        <label for="tag">find tag specific snippets</label>
+        <input type="text" name="tag" placeholder="tag">
+        <button type="submit" name="button" onclick="window.location='/api/view/all/tags';">submit</button>
       </form>
       {{/user}}
     </div>

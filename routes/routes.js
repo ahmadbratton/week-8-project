@@ -15,6 +15,13 @@ let snippetId;
 let usertags = [];
 let the_tags;
 let onesnippet = [];
+let the_users_snips = [];
+let allSnippets = [];
+let allLang = [];
+let allTags = [];
+let username;
+let alltagsnips;
+
 
 var config = {
     salt: function(length){
@@ -99,7 +106,6 @@ let yourLangSnippets = function (req, res , next) {
     }
   }).then(function (langSnippets) {
 
-    console.log("these are the language joints",langSnippets);
     langSnippets.forEach(function (snippet) {
       userLangSnippets = {
         id:snippet.id,
@@ -185,6 +191,150 @@ let thisSnip = function (req, res, next) {
 }
 
 
+let viewUserSnips = function (req, res, next) {
+  the_users_snips = []
+  models.snippets.findAll({
+    where:{
+      userid:req.params.id
+    },
+    include: [{
+      model:models.users,
+      as:"users"
+    },
+    {
+    model:models.tags,
+    as:"tags"
+  }],
+  order:[
+    ["createdAt", "DESC"]
+  ]
+  }).then(function (userSnippet) {
+    // console.log("THIS IS THE ENTIER SNIPPET OBJECT", userSnippet);
+    userSnippet.forEach(function (snippet) {
+      // console.log("THIS IS THE DATA VALUES",snippet.dataValues);
+      // console.log("THIS IS THE tags",snippet.tags);
+
+      userSnippets = {
+        id:snippet.id,
+        body: snippet.body,
+        notes: snippet.notes,
+        language: snippet.language,
+        userid:snippet.userid,
+        stars: snippet.stars,
+        user: snippet.users.dataValues.username,
+        tags:snippet.tags
+      }
+      the_users_snips.push(userSnippets);
+    })
+    next();
+  });
+}
+
+
+let viewAllSnips = function (req, res, next) {
+  allSnippets = []
+  models.snippets.findAll({
+    include: [{
+      model:models.users,
+      as:"users"
+    },
+    {
+    model:models.tags,
+    as:"tags"
+  }],
+  order:[
+    ["createdAt", "DESC"]
+  ]
+  }).then(function (userSnippet) {
+
+    userSnippet.forEach(function (snippet) {
+
+
+      userSnippets = {
+        id:snippet.id,
+        body: snippet.body,
+        notes: snippet.notes,
+        language: snippet.language,
+        userid:snippet.userid,
+        stars: snippet.stars,
+        user: snippet.users.dataValues.username,
+        tags:snippet.tags
+      }
+      allSnippets.push(userSnippets);
+    })
+    next();
+  });
+}
+
+
+let viewAllLang = function (req, res, next) {
+  allLang = [];
+  models.snippets.findAll({
+    where:{
+      language: req.query.allLanguage
+    },
+    include: [{
+      model:models.users,
+      as:"users"
+    },
+    {
+    model:models.tags,
+    as:"tags"
+  }],
+  order:[
+    ["createdAt", "DESC"]
+  ]
+  }).then(function (langSnippets) {
+    langSnippets.forEach(function (snippet) {
+      userLangSnippets = {
+        id:snippet.id,
+        body: snippet.body,
+        notes: snippet.notes,
+        language: snippet.language,
+        userid:snippet.userid,
+        stars: snippet.stars,
+        user: snippet.users.dataValues.username,
+        tags:snippet.tags
+      }
+      allLang.push(userLangSnippets)
+    })
+    next();
+});
+}
+
+let viewAllTags = function (req, res, next) {
+  allTags = [];
+  models.tags.findAll({
+    where:{
+      tag:req.query.tag
+    },
+    include: [{
+      model:models.users,
+      as:"users"
+    },
+    {
+    model:models.snippets,
+    as:"snippets"
+  }],
+  order:[
+    ["createdAt", "DESC"]
+  ]
+}).then(function (yourtags) {
+    yourtags.forEach(function (tag) {
+      allTags.push(tag.snippets.dataValues);
+    })
+    next();
+  });
+}
+
+let favs = function (req, res, next) {
+  models.snippets.findOne({where:{id:req.params.id}}).then(function (snippet) {
+    snippet.increment("stars", {by:1}).then(function (star) {
+      console.log(star);
+  })
+})
+}
+
 // isPasswordCorrect(passwordData);
 router.get("/",  function(req, res) {
   if (name) {
@@ -199,7 +349,7 @@ router.get("/",  function(req, res) {
 router.get("/api/home", yourSnippets,  function(req, res) {
 
   if (name) {
-    res.render('index', {user: name , snippets:snippets});
+    res.render('index', {user: name , userId,  snippets:snippets});
   }else{
     res.redirect("/api/login")
   }
@@ -231,7 +381,7 @@ router.get("/api/create", function (req, res) {
 router.get("/api/language", yourLangSnippets, function (req, res) {
   if (name) {
     // console.log("THIS IS USER LANG:", userlang);
-    res.render("userlanguage" , {user: name, userlang: userlang});
+    res.render("userlanguage" , {user: name , userId, userlang: userlang});
   }else {
     res.redirect("/api/login");
   }
@@ -240,7 +390,7 @@ router.get("/api/language", yourLangSnippets, function (req, res) {
 
 router.get("/api/usertags", yourtags , function (req, res) {
   if (name) {
-    res.render("usertags" , {user: name, usertag: usertags} );
+    res.render("usertags" , {user: name, userId, usertag: usertags} );
   }else {
     res.redirect("/api/login");
   }
@@ -249,7 +399,16 @@ router.get("/api/usertags", yourtags , function (req, res) {
 
 router.get("/api/view/snippet/:id", thisSnip,  function (req, res) {
   if (name) {
-    res.render("view_snip" , {user: name, snippet: onesnippet} );
+    res.render("view_snip" , {user: name, userId, snippet: onesnippet} );
+  }else {
+    res.redirect("/api/login");
+  }
+
+})
+
+router.get("/api/view/user/snippets/:id", viewUserSnips ,  function (req, res) {
+  if (name) {
+    res.render("view_users_snippets" , {user: name, userId, snippets: the_users_snips} );
   }else {
     res.redirect("/api/login");
   }
@@ -257,7 +416,33 @@ router.get("/api/view/snippet/:id", thisSnip,  function (req, res) {
 })
 
 
+router.get("/api/view/all/snippets", viewAllSnips ,  function (req, res) {
+  if (name) {
+    res.render("view_all_snippets" , {user: name, userId, snippets: allSnippets} );
+  }else {
+    res.redirect("/api/login");
+  }
 
+})
+
+router.get("/api/view/all/language", viewAllLang ,  function (req, res) {
+  if (name) {
+    res.render("view_all_lang" , {user: name, userId, snippets: allLang} );
+  }else {
+    res.redirect("/api/login");
+  }
+
+})
+
+router.get("/api/view/all/tags", viewAllTags ,  function (req, res) {
+  if (name) {
+    // console.log("this is the tags snippets", allTags);
+    res.render("view_all_tag" , {user: name, userId, snippets: allTags} );
+  }else {
+    res.redirect("/api/login");
+  }
+
+})
 
 
 
@@ -363,6 +548,11 @@ router.post("/api/create/tag/:id", function (req, res) {
       res.redirect("/api/create")
     }
   })
+})
+
+
+router.post("/api/star/:id", favs, function (req, res) {
+res.redirect("/api/home")
 })
 
 

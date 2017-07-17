@@ -21,6 +21,7 @@ let allLang = [];
 let allTags = [];
 let username;
 let alltagsnips;
+let tagArray = [];
 
 
 var config = {
@@ -102,7 +103,7 @@ let yourLangSnippets = function (req, res , next) {
   models.snippets.findAll({
     where:{
       userid:userId,
-      language: req.query.language
+      language: req.query.language.toLowerCase()
     }
   }).then(function (langSnippets) {
 
@@ -128,7 +129,7 @@ let yourtags = function (req, res, next) {
   models.tags.findAll({
     where:{
       userid:userId,
-      tag:req.query.tag
+      tag:req.query.tag.toLowerCase()
     },
     include: [{
       model:models.users,
@@ -152,7 +153,8 @@ let yourtags = function (req, res, next) {
 }
 
 let thisSnip = function (req, res, next) {
-  onesnippet = []
+  tagArray = [];
+  onesnippet = [];
   models.snippets.findAll({
     where:{
       id:req.params.id
@@ -174,6 +176,8 @@ let thisSnip = function (req, res, next) {
       // console.log("THIS IS THE DATA VALUES",snippet.dataValues);
       // console.log("THIS IS THE tags",snippet.tags);
 
+
+
       userSnippets = {
         id:snippet.id,
         body: snippet.body,
@@ -185,9 +189,18 @@ let thisSnip = function (req, res, next) {
         tags:snippet.tags
       }
       onesnippet.push(userSnippets);
+      snippet.tags.forEach(function (tags) {
+        console.log("TAGS DATA VALUES",tags.dataValues);
+        tagArray.push(tags.dataValues.tag);
+      });
+
     })
     next();
-  });
+
+    })
+
+
+
 }
 
 
@@ -271,7 +284,7 @@ let viewAllLang = function (req, res, next) {
   allLang = [];
   models.snippets.findAll({
     where:{
-      language: req.query.allLanguage
+      language: req.query.allLanguage.toLowerCase()
     },
     include: [{
       model:models.users,
@@ -306,7 +319,7 @@ let viewAllTags = function (req, res, next) {
   allTags = [];
   models.tags.findAll({
     where:{
-      tag:req.query.tag
+      tag:req.query.tag.toLowerCase()
     },
     include: [{
       model:models.users,
@@ -332,6 +345,7 @@ let favs = function (req, res, next) {
     snippet.increment("stars", {by:1}).then(function (star) {
       console.log(star);
   })
+next();
 })
 }
 
@@ -399,7 +413,7 @@ router.get("/api/usertags", yourtags , function (req, res) {
 
 router.get("/api/view/snippet/:id", thisSnip,  function (req, res) {
   if (name) {
-    res.render("view_snip" , {user: name, userId, snippet: onesnippet} );
+    res.render("view_snip" , {user: name, userId, snippet: onesnippet , tagArray} );
   }else {
     res.redirect("/api/login");
   }
@@ -476,7 +490,7 @@ router.post("/api/login", function (req, res) {
   if (errors) {
     errors.forEach(function(error) {
       messages.push(error.msg);
-      res.redirect()
+      res.redirect("/api/login");
     });
     res.render("login", {
       errors: messages
